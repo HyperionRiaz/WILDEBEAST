@@ -97,8 +97,7 @@ public class QueryRun extends HttpServlet {
 		        request.setAttribute("logSummary", path+"summary.txt");
 		        request.setAttribute("consolePath", path+"consoleOutput.txt");
 		        request.setAttribute("errorPath", path+"consoleOutputErrors.txt");
-		        request.setAttribute("runID", runID);
-		        
+		        request.setAttribute("runID", runID);    
 		        request.setAttribute("CI", CI);
 		        request.setAttribute("ESS", ESSout);
 		        request.setAttribute("sumESS", sumESS);
