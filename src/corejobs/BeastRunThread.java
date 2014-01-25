@@ -32,7 +32,7 @@ public class BeastRunThread implements Runnable {
                
         try {
 	
-        	File f = new File(runFrom+"/input.xml");
+        	File f = new File(runFrom+"/output.xml");
         	while(f.exists() == false) { 
   		
         		//System.out.println("File not found");

@@ -75,7 +75,10 @@ public class ViewEpidemicRuns extends HttpServlet {
 				}
 				
 				request.setAttribute("notification", message);
-			        
+			     
+				// Set refresh, autoload time as 5 seconds
+			    response.setIntHeader("Refresh", 60);
+			      
 			    RequestDispatcher view = request.getRequestDispatcher("manageEpidemicRuns.jsp");
 			    request.setAttribute("data", data);
 				view.forward(request, response);

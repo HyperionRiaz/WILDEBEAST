@@ -10,10 +10,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.channels.FileChannel;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.*;
 
+import datajobs.DatabaseUtilities;
+import datajobs.LogUtilities;
 import datajobs.Run;
 
 
@@ -43,7 +48,7 @@ public class BeastUtilities {
 			//from the appropriate sub directory (where output files will be genearted), retrieves the PID, 
 			//and inserts the run info into the table.
 			
-			String message = "java -jar ../../beastSource/lib/beast.jar -seed 1234 -overwrite " + "input.xml";
+			String message = "java -jar ../../beastSource/lib/beast.jar -seed 1234 -overwrite " + "output.xml";
 			String pathToRunFrom = epidemicID+"/" + runID;
 			Runnable r = new BeastRunThread(message, pathToRunFrom, epidemicID, runID, chainLength, predictivePot);
 			new Thread(r).start();
@@ -61,16 +66,26 @@ public class BeastUtilities {
 		
 	}
 	
+	//  ***************************************************************************
+	// 	***            Tools to work with different file types				    ***
+	//  ***************************************************************************
+	
 	//Uses BeastConverts to convert an uploaded nexus file as well as params to an xml file
 	public static boolean nexusToBeastFile(String nexusFilePath, float chainLength, int logEvery, String runID, String outputPath) throws IOException
 	{
 	
 		System.out.println("*** Making beast file from nexus *** ");
-        runID = "input";
+        runID = "output";
         String finalPath = outputPath+runID+".xml";
         
         //TODO handle large numbers!
         String command = "./generateBeastXML.sh " + (int)chainLength + " " + logEvery + " " + nexusFilePath + " " + finalPath;
+       
+        //TODO got to get this working -> summary breaks for some reason.
+        command = "./generateBeastXMLE.sh " + (int)chainLength + " " + logEvery + " " + nexusFilePath + " " + finalPath;
+        
+        System.err.println(command);
+        
 		String[] commandA =  command.split(" "); //First, take the command passed in and split it up for processBuilder
         ProcessBuilder probuilder = new ProcessBuilder( commandA ); //Construct a processBuilder with all arguments
         Process process = probuilder.start(); //Start the run. All outputs will appear in the subdirectory!
@@ -105,63 +120,63 @@ public class BeastUtilities {
         
 		return true;
 	}
-		
-	//Runs BEAST
+			
+	//  ***************************************************************************
+	// 	***      			Tools to start and stop run						    ***
+	//  ***************************************************************************
+	
+	//Starts a BEAST run
 	public static String runBEAST()
-	{
-		String output = "";
-		
-		
-		boolean runHere = true;
-		
-		if (runHere)
 		{
+			String output = "";
 			
-			try {
-	            Runtime rt = Runtime.getRuntime();
-	            Process pr = rt.exec(" pwd");
-	           
-	            //pr = rt.exec("touch aids");
-	            pr = rt.exec("java -jar beastSource/lib/beast.jar -seed 1234 beastSource/lib/input.xml");
-	           
-	            //TODO ERROR STREAM pr.getErrorStream();
-	            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-	
-	            String line=null;
-	            
-	            BufferedWriter out = new BufferedWriter(new FileWriter("MCMCoutput.txt"));
+			
+			boolean runHere = true;
+			
+			if (runHere)
+			{
+				
+				try {
+		            Runtime rt = Runtime.getRuntime();
+		            Process pr = rt.exec(" pwd");
+		           
+		            //pr = rt.exec("touch aids");
+		            pr = rt.exec("java -jar beastSource/lib/beast.jar -seed 1234 beastSource/lib/output.xml");
+		           
+		            //TODO ERROR STREAM pr.getErrorStream();
+		            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+		
+		            String line=null;
+		            
+		            BufferedWriter out = new BufferedWriter(new FileWriter("MCMCoutput.txt"));
 
-	
-	            while((line=input.readLine()) != null) {
-	                //System.out.println(line);
-	                output = output + "\n" + line;
-	                out.write(line);
-	            }
-	
-	         
-	            int exitVal = pr.waitFor();
-	            System.out.println("Exited with error code " );
-	            System.out.println(output);
-	            out.close();
-	        } catch(Exception e) {
-	            System.out.println(e.toString());
-	            e.printStackTrace();
-	        }
-		}
-		else
-		{
-			//.(new HelloThread()).start();
-			
-		}
 		
-		return output;
-	}
+		            while((line=input.readLine()) != null) {
+		                //System.out.println(line);
+		                output = output + "\n" + line;
+		                out.write(line);
+		            }
+		
+		         
+		            int exitVal = pr.waitFor();
+		            System.out.println("Exited with error code " );
+		            System.out.println(output);
+		            out.close();
+		        } catch(Exception e) {
+		            System.out.println(e.toString());
+		            e.printStackTrace();
+		        }
+			}
+			else
+			{
+				//.(new HelloThread()).start();
+				
+			}
+			
+			return output;
+		}
 	
-	
-	//  ***************************************************************************
-	// 	***      			Tools to stop run							        ***
-	//  ***************************************************************************
-	
+	//Stops a beast run.
 	public static void stopRun(String processID) throws IOException, SQLException
 	{
 		System.out.println("*** Stoppung run with ID " + processID + " ***");
@@ -177,5 +192,7 @@ public class BeastUtilities {
        		
 	}
  
+	
+	
 }
 

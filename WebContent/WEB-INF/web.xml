@@ -21,6 +21,26 @@
         <param-value>"Alien2"</param-value>
   </context-param>
   
+    <!--  Servlet Context - the last time summary files were generated for runs -->
+  <context-param>
+        <param-name>sumsUpdated </param-name>
+        <param-value>""</param-value>
+  </context-param>
+  
+  <!--  Set Cronjob for auto generating summary files to run on server startup and every 5 mins -->
+    <env-entry>
+    <description>Minutes to Parse - 1440 minutes = 1 day</description>
+    <env-entry-name>Minutes</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>5</env-entry-value>
+  </env-entry>
+  
+  <servlet>
+    <servlet-name>ParseSchedular</servlet-name>
+    <servlet-class>corejobs.ParseSchedular</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  
   <!--  Go to index as default -->
   
   <welcome-file-list>  
@@ -37,6 +57,8 @@
     <servlet-name>AddEpidemic</servlet-name>
     <url-pattern>/AddEpidemic</url-pattern>
   </servlet-mapping>
+  
+  
   
   <servlet>
     <servlet-name>AddEpidemicDatabase</servlet-name>
@@ -69,6 +91,27 @@
   <servlet-mapping>
     <servlet-name>StopRun</servlet-name>
     <url-pattern>/stopRun/*</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+    <servlet-name>DeleteRun</servlet-name>
+    <servlet-class>datajobs.DeleteRun</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteRun</servlet-name>
+    <url-pattern>/deleteRun/*</url-pattern>
+  </servlet-mapping>
+  
+  
+  <!--  Stop Run -->
+  
+    <servlet>
+    <servlet-name>EstimateBest</servlet-name>
+    <servlet-class>datajobs.EstimateBest</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EstimateBest</servlet-name>
+    <url-pattern>/estimateBest/*</url-pattern>
   </servlet-mapping>
   
   
@@ -159,18 +202,7 @@
   
 
   
-  <env-entry>
-    <description>Minutes to Parse - 1440 minutes = 1 day</description>
-    <env-entry-name>Minutes</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>1</env-entry-value>
-  </env-entry>
-  
-  <servlet>
-    <servlet-name>ParseSchedular</servlet-name>
-    <servlet-class>corejobs.ParseSchedular</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+
   
   
 

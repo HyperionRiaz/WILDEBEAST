@@ -2,9 +2,16 @@ package corejobs;
 
 
 import java.io.*;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.naming.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+
+import datajobs.LogUtilities;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,32 +29,46 @@ private int minutes = 15;
 * Web Call method.
 *
 */
-public void getJobInfo() {
-try {
-//Properties from web.xml enviornment file
-Context initCtx = new InitialContext();
-Context envCtx = (Context)initCtx.lookup("java:comp/env");
-String ctxminutes = (String) envCtx.lookup("Minutes");
-this.minutes = Integer.parseInt(ctxminutes);
-startScheduler();
-}
-catch (Exception e) {
-}
-}
+		public void getJobInfo() 
+		{
+		try {
+				//Properties from web.xml enviornment file
+				Context initCtx = new InitialContext();
+				Context envCtx = (Context)initCtx.lookup("java:comp/env");
+				String ctxminutes = (String) envCtx.lookup("Minutes");
+				this.minutes = Integer.parseInt(ctxminutes);
+				startScheduler();
+			}
+			catch (Exception e) {
+			}
+		}
 
 /**
 * start schedular.
 *
 */
-	private void startScheduler() {
+	private void startScheduler() 
+	{
 		
 		
-			timer.schedule(new TimerTask(){
+			timer.schedule(new TimerTask()
+			
+			{
 				
 				
 			public void run(){
 				try {
-					scheduleParse();
+					try {
+						scheduleParse();
+//						DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//						Date date = new Date();
+//						ServletContext c = getServletContext();
+//						c.setAttribute("sumsUpdated", dateFormat.format(date));
+						
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -55,12 +76,15 @@ catch (Exception e) {
 				//timer.cancel();
 			}
 			
-			private void scheduleParse() throws IOException 
+			private void scheduleParse() throws IOException, SQLException 
 			{
-			//write your business logic here
+				//write your business logic here
 				
-				Runtime rt = Runtime.getRuntime();
-			    Process pr = rt.exec("touch omgitrun.txt");
+				System.err.println("--- UPDATING SUMMARY FILES! --- ");
+				LogUtilities.generateAllSummaryFiles();
+				
+				
+				
 			}
 			
 			

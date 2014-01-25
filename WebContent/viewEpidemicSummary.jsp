@@ -80,35 +80,31 @@
     	<br>
     	
  		<h2>Background Information on Epidemic</h2>
-  		<br>
-		 
+  			 
 		 ${bodyContent }
-		
-		<br>
-		<br>
-		<h2>Parameter Estimates</h2>
-		Not yet implemented
+	
 		<br>
 		<br>
 		
-		<h2>Phylogeny Estimates</h2>
-		Not yet implemented
+		<h2>Best Parameter Estimates</h2>
+		${runID}
+	
+		${estimates }
+		
+		<br>
+		<h3>Phylogeny</h3>
+		${phylogeny}
+
 		<br>
 		<br>
 		
-		<h2>Downloads</h2>
-		Not yet implemented
 		
-		
-		<br>
-		<br>
-		
-		 
-		<br>
-		<br>
 		</div>
+		<a href='estimateBest'><button id="somebutton">Get best estimate</button></a>
 		
-		<h1>Manage analysis and data for this epidemic</h1>
+		<hr>
+		
+		<h2>Manage analysis and data for this epidemic</h2>
 		<a href='viewEpidemicRuns'><button id="somebutton">Manage MCMCs</button></a>
 		<a href='viewEpidemicRuns '><button id="somebutton">todo Manage Data</button></a>
 		<a href='viewEpidemicRuns '><button id="somebutton">todo Mange Recommendations</button></a>

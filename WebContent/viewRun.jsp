@@ -78,7 +78,7 @@
   	 		
   	 		<h2>Controls</h2>
   	 		<a href='stopRun?processID=${processID}'><button type='button'>Stop run</button></a>
-  	 		<button type='button'>Delete run</button>
+  	 		<a href='deleteRun?runID=${runID}'><button type='button'>Delete run</button></a>
   	 
     	                     
     	</div>

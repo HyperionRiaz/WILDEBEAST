@@ -56,7 +56,7 @@ public class QueryRun extends HttpServlet {
 					Iterator it = display.entrySet().iterator();
 				    while (it.hasNext()) {
 				        Map.Entry pairs = (Map.Entry)it.next();
-				        System.out.println(pairs.getKey() + " = " + pairs.getValue());
+				        //System.out.println(pairs.getKey() + " = " + pairs.getValue());
 				        it.remove(); // avoids a ConcurrentModificationException
 				        request.setAttribute(pairs.getKey().toString(), pairs.getValue()+"");
 				    }
@@ -66,6 +66,9 @@ public class QueryRun extends HttpServlet {
 					e.printStackTrace();
 				}
 			  
+			    // == Create summary file for run ONCE == 
+			    logtools.createSummaryFile(epidemicID, runID);
+			    
 			    // == GET CI == 
 			    String CI = logtools.getCI(epidemicID, runID);
 			    

@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.commons.io.FileUtils;
 
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.ResultSetMetaData;
@@ -53,6 +56,8 @@ public class DatabaseUtilities
 			+ "(id, processID, timestarted, chainlength, predictivepot) VALUES"
 			+ "(?,?,?,?, ?)";	
 	
+	static String deleteRunSQL = "DELETE FROM Runs WHERE id=?";
+
 	static String insertSequencesTableSQL = "INSERT INTO Sequences"
 			+ "(id, seqdata, subdate, coldate, founddate, loc, descrip) VALUES"
 			+ "(?,?,?,?, ?, ?, ?)";	
@@ -216,7 +221,37 @@ public class DatabaseUtilities
 		return html; 
 		
 	}
-
+	
+	//Get all the epidemicIDs in an array list
+	public static ArrayList<String> getAllEpidemicIDs()
+	{	
+		ArrayList<String> epidemicIDs = new ArrayList<String>();
+		try
+		{
+			Connection c = connectToDatabase("epidemics", "riaz", "Mordor");						
+					
+			PreparedStatement preparedStatement = (PreparedStatement) c.prepareStatement(viewEpidemicsSQL);
+			ResultSet rs = preparedStatement.executeQuery();
+			
+			while (rs.next())
+			{
+				String id  = rs.getString("epidemicID");
+				epidemicIDs.add(id);
+	     
+			}
+			
+			preparedStatement.close();
+	        c.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+	
+		}
+		
+		return epidemicIDs;
+		
+	}
 	
 	//  **************************************************************************
 	// 	*** Methods for dealing with Database/tables of a specific Epidemic    ***
@@ -264,7 +299,7 @@ public class DatabaseUtilities
 		
 	// == Methods for Runs ==
 	
-	public ResultSet getAllRuns(String epidemicID) throws SQLException
+	public static ResultSet getAllRuns(String epidemicID) throws SQLException
 	{
 		ResultSet rs = null;
 		try
@@ -828,6 +863,38 @@ public class DatabaseUtilities
     	
 	}
 
+	//To delete a runs info
+	public static boolean deleteRun(String epidemicID, String runID) throws IOException
+	{
+		//Connect to epidemicsDB and delete the record
+		boolean completed = true;
+		
+		try
+		{
+			
+			Connection c = connectToDatabase(epidemicID, "riaz", "Mordor");						
+			PreparedStatement preparedStatement = (PreparedStatement) c.prepareStatement(deleteRunSQL);
+			preparedStatement.setString(1, runID);	
+			preparedStatement .executeUpdate();
+			preparedStatement.close();
+			
+		}
+		catch (Exception e)
+		{
+			completed = false;
+			System.err.println("New run NOT removed from table.");
+			e.printStackTrace();
+		}
+		
+		if (completed)
+		{
+			//Now delete the subdirectory
+			FileUtils.deleteDirectory(new File(epidemicID+"/"+runID));
+			System.out.println("*** Run deleted from database and sub directory removed***");
+		}
+		
+		return completed;
 	
+	}
 
 }
